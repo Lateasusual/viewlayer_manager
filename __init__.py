@@ -43,7 +43,6 @@ def disable_collection(col):
     col.exclude = True
 
 
-
 class VLM_OT_remove_view_layer(bpy.types.Operator):
     bl_label = "Remove view layer by index"
     bl_idname = "scene.remove_view_layer"
@@ -60,10 +59,15 @@ class VLM_OT_add_blank_layer(bpy.types.Operator):
     bl_label = "Create blank view layer"
     bl_idname = "scene.view_layer_add_blank"
 
+
+
     def execute(self, context):
         layer = context.scene.view_layers.new(context.view_layer.name)
         for c in layer.layer_collection.children:
-            disable_collection(c)
+            if not context.scene.exclude_only_top_layer:
+                disable_collection(c)
+            else:
+                c.exclude = True
         return {'FINISHED'}
 
 
@@ -83,6 +87,7 @@ class ViewLayerManager(bpy.types.Operator):
 
         layout.template_list("VLM_UL_layers", "", scene, "view_layers", scene, "active_view_layer_index", rows=15)
         layout.operator("scene.view_layer_add_blank", icon="PLUS")
+        layout.prop(scene, "exclude_only_top_layer")
 
     def execute(self, context):
         wm = context.window_manager
@@ -107,14 +112,14 @@ def register():
         bpy.utils.register_class(cls)
     bpy.types.Scene.active_view_layer_index = bpy.props.IntProperty(default=0, name="Active view layer index",
                                                                     update=update_active_layer)
+    bpy.types.Scene.exclude_only_top_layer = bpy.props.BoolProperty(default=False,
+                                                                    name="Exclude only top layer collections")
     bpy.types.TOPBAR_HT_upper_bar.append(icon_button)
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-
-
 
 
 if __name__ == '__main__':
