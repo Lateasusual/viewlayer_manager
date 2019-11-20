@@ -32,7 +32,7 @@ class VLM_UL_layers(bpy.types.UIList):
         row.label()
         row = split.row()
         row.alignment = "RIGHT"
-        row.operator("scene.remove_view_layer", icon="PANEL_CLOSE", text="")
+        row.operator("scene.remove_view_layer", icon="PANEL_CLOSE", text="").name = item.name
         row.prop(item, "use", icon="RENDER_STILL", text="")
 
 
@@ -47,8 +47,10 @@ class VLM_OT_remove_view_layer(bpy.types.Operator):
     bl_label = "Remove view layer by index"
     bl_idname = "scene.remove_view_layer"
 
+    name: bpy.props.StringProperty()
+
     def execute(self, context):
-        layer = context.scene.view_layers[context.scene.active_view_layer_index]
+        layer = context.scene.view_layers[self.name]
         context.scene.view_layers.remove(layer)
         return {'FINISHED'}
 
@@ -111,6 +113,8 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-        
+
+
+
 if __name__ == '__main__':
     register()
