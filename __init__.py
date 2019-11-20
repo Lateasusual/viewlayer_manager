@@ -34,7 +34,10 @@ class VLM_UL_layers(bpy.types.UIList):
         row.alignment = "RIGHT"
         if len(context.scene.view_layers) > 1:
             row.operator("scene.remove_view_layer", icon="PANEL_CLOSE", text="").name = item.name
-        row.prop(item, "use", icon="RENDER_STILL", text="")
+        if item.use:
+            row.prop(item, "use", icon="RESTRICT_RENDER_OFF", text="", toggle=0)
+        else:
+            row.prop(item, "use", icon="RESTRICT_RENDER_ON", text="", toggle=0)
 
 
 def disable_collection(col):
