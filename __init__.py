@@ -12,7 +12,7 @@ bl_info = {
     "category": "User Interface"}
 
 
-class VLM_UI_layers(bpy.types.UIList):
+class VLM_UL_layers(bpy.types.UIList):
 
     def draw_item(self,
                   context,
@@ -42,6 +42,7 @@ def disable_collection(col):
     col.exclude = True
 
 
+
 class VLM_OT_remove_view_layer(bpy.types.Operator):
     bl_label = "Remove view layer by index"
     bl_idname = "scene.remove_view_layer"
@@ -52,14 +53,14 @@ class VLM_OT_remove_view_layer(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
 class VLM_OT_add_blank_layer(bpy.types.Operator):
     bl_label = "Create blank view layer"
-    bl_idname = "scene.view_layer_add"
+    bl_idname = "scene.view_layer_add_blank"
 
     def execute(self, context):
         layer = context.scene.view_layers.new(context.view_layer.name)
-        disable_collection(layer.layer_collection)
+        for c in layer.layer_collection.children:
+            disable_collection(c)
         return {'FINISHED'}
 
 
@@ -77,8 +78,8 @@ class ViewLayerManager(bpy.types.Operator):
         layout = self.layout
         scene = context.scene
 
-        layout.template_list("VLM_UI_layers", "", scene, "view_layers", scene, "active_view_layer_index", rows=15)
-        layout.operator("scene.view_layer_add", icon="PLUS")
+        layout.template_list("VLM_UL_layers", "", scene, "view_layers", scene, "active_view_layer_index", rows=15)
+        layout.operator("scene.view_layer_add_blank", icon="PLUS")
 
     def execute(self, context):
         wm = context.window_manager
@@ -93,7 +94,7 @@ def icon_button(self, context):
 classes = [
     VLM_OT_add_blank_layer,
     VLM_OT_remove_view_layer,
-    VLM_UI_layers,
+    VLM_UL_layers,
     ViewLayerManager,
 ]
 
@@ -110,8 +111,6 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-
-
-
+        
 if __name__ == '__main__':
     register()
