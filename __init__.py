@@ -32,7 +32,8 @@ class VLM_UL_layers(bpy.types.UIList):
         row.label()
         row = split.row()
         row.alignment = "RIGHT"
-        row.operator("scene.remove_view_layer", icon="PANEL_CLOSE", text="").name = item.name
+        if len(context.scene.view_layers) > 1:
+            row.operator("scene.remove_view_layer", icon="PANEL_CLOSE", text="").name = item.name
         row.prop(item, "use", icon="RENDER_STILL", text="")
 
 
