@@ -47,6 +47,7 @@ def disable_collection(col):
 
 
 class VLM_OT_remove_view_layer(bpy.types.Operator):
+    """Removes a view layer by name, instead of the active layer"""
     bl_label = "Remove view layer by index"
     bl_idname = "scene.remove_view_layer"
 
@@ -59,10 +60,9 @@ class VLM_OT_remove_view_layer(bpy.types.Operator):
 
 
 class VLM_OT_add_blank_layer(bpy.types.Operator):
+    """Adds a new view layer with layer collections disabled by default"""
     bl_label = "Create blank view layer"
     bl_idname = "scene.view_layer_add_blank"
-
-
 
     def execute(self, context):
         layer = context.scene.view_layers.new(context.view_layer.name)
@@ -124,6 +124,7 @@ def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     bpy.types.TOPBAR_HT_upper_bar.remove(icon_button)
+
 
 if __name__ == '__main__':
     register()
