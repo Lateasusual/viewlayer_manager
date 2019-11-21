@@ -4,7 +4,7 @@ bl_info = {
     "name": "ViewLayer Manager",
     "description": "Create, Rename and Remove view layers without changing currently active view layer",
     "author": "Lateasusual",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (2, 80, 0),
     "location": "Header -> View Layer",
     "warning": '',  # used for warning icon and text in addons panel
@@ -79,10 +79,9 @@ def update_active_layer(self, context):
 
 
 class ViewLayerManager(bpy.types.Operator):
+    """Open view layer manager"""
     bl_label = "ViewLayer Manager"
     bl_idname = "scene.view_layer_manager"
-
-    view_layer_active = ""
 
     def draw(self, context):
         layout = self.layout
@@ -117,13 +116,14 @@ def register():
                                                                     update=update_active_layer)
     bpy.types.Scene.exclude_only_top_layer = bpy.props.BoolProperty(default=False,
                                                                     name="Exclude only top layer collections")
-    bpy.types.TOPBAR_HT_upper_bar.append(icon_button)
+    if not hasattr(bpy.types.TOPBAR_HT_upper_bar, "icon_button"):
+        bpy.types.TOPBAR_HT_upper_bar.append(icon_button)
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-
+    bpy.types.TOPBAR_HT_upper_bar.remove(icon_button)
 
 if __name__ == '__main__':
     register()
