@@ -56,12 +56,13 @@ class VLM_OT_remove_view_layer(bpy.types.Operator):
     def execute(self, context):
         layer = context.scene.view_layers[self.name]
         context.scene.view_layers.remove(layer)
+        context.scene.active_view_layer_index = context.scene.view_layers.find(context.window.view_layer.name)
         return {'FINISHED'}
 
 
 class VLM_OT_add_blank_layer(bpy.types.Operator):
     """Adds a new view layer with layer collections disabled by default"""
-    bl_label = "Create blank view layer"
+    bl_label = "Create Blank ViewLayer"
     bl_idname = "scene.view_layer_add_blank"
 
     def execute(self, context):
@@ -71,6 +72,8 @@ class VLM_OT_add_blank_layer(bpy.types.Operator):
                 disable_collection(c)
             else:
                 c.exclude = True
+        context.window.view_layer = layer
+        context.scene.active_view_layer_index = context.scene.view_layers.find(layer.name)
         return {'FINISHED'}
 
 
@@ -93,9 +96,11 @@ class ViewLayerManagerPanel(bpy.types.Panel):
         layout = self.layout
         scene = context.scene
 
-        layout.template_list("VLM_UL_layers", "", scene, "view_layers", scene, "active_view_layer_index", rows=10)
+        layout.template_list("VLM_UL_layers", "", scene, "view_layers", scene, "active_view_layer_index")
         layout.prop(context.window.view_layer, "name")
-        layout.operator("scene.view_layer_add_blank", icon="PLUS")
+        row = layout.row()
+        row.operator("scene.view_layer_add_blank", icon="PLUS")
+        row.operator("scene.view_layer_add")
         layout.prop(scene, "exclude_only_top_layer")
 
 
