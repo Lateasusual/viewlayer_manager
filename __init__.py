@@ -100,7 +100,6 @@ class ViewLayerManagerPanel(bpy.types.Panel):
         layout.prop(context.window.view_layer, "name")
         row = layout.row()
         row.operator("scene.view_layer_add_blank", icon="PLUS")
-        row.operator("scene.view_layer_add")
         layout.prop(scene, "exclude_only_top_layer")
 
 
